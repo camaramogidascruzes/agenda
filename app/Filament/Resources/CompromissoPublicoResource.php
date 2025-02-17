@@ -50,7 +50,9 @@ class CompromissoPublicoResource extends Resource
                 TextColumn::make('hora')
                     ->label('Hora')
                     ->Time(),
+                TextColumn::make('tipo.nome'),
                 TextColumn::make('assunto')
+                    ->searchable(['assunto','descricao']),
             ])
             ->filters([
                 //
@@ -63,9 +65,13 @@ class CompromissoPublicoResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('hora','desc')
-            ->groups(['data'])
-            ->defaultGroup('data')
+            ->defaultSort('hora')
+            ->defaultGroup(
+                Tables\Grouping\Group::make('data')
+                    ->orderQueryUsing((fn (Builder $query) => $query->orderBy('data', 'desc')))
+                    ->label('Data')
+                    ->getTitleFromRecordUsing(fn (CompromissoPublico $record): string => $record->data->format('d/m/Y'))
+            )
             ->paginated([50, 100, 'all']);
     }
 
@@ -93,12 +99,14 @@ class CompromissoPublicoResource extends Resource
                     Select::make('tipo_id')
                         ->label('Tipo')
                         ->options(CompromissoPublicoTipo::all()->pluck('nome', 'id'))
-                        ->columnSpan(2),
+                        ->columnSpan(2)
+                        ->required(),
                     DatePicker::make('data')
                         ->label('Data')
                         ->default(now()),
                     TimePicker::make('hora')
                         ->label('Hora')
+                        ->format('H:i')
                         ->default(now()),
                     TextInput::make('assunto')
                         ->label('Assunto')

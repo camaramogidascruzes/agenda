@@ -134,10 +134,21 @@ class CompromissoPublicoResource extends Resource
                             'undo',
                         ])
                         ->columnSpan(['sm' => 1 , 'md' => '2']),
-                    Textarea::make('participantes')
+                    RichEditor::make('participantes')
                         ->label('Participantes')
-                        ->rows(5)
-                        ->columnSpan(2),
+                        ->toolbarButtons([
+                            'bold',
+                            'bulletList',
+                            'h2',
+                            'h3',
+                            'italic',
+                            'orderedList',
+                            'redo',
+                            'strike',
+                            'underline',
+                            'undo',
+                        ])
+                        ->columnSpan(['sm' => 1 , 'md' => '2']),
                 ])
             ->columns(2)
             ->columnSpan(['lg' => fn (?CompromissoPublico $record) => $record === null ? 3 : 2]);
